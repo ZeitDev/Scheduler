@@ -27,7 +27,8 @@ intents = nextcord.Intents.default()
 intents.members = True
 
 description = '''
-Description Placeholder
+Bot zur Terminerstellung und -verfolgung.
+- Rolle 'Terminerinnerung' kann für Urlaub entfernt werden.
 '''
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or(prefix), description=description, intents=intents)

@@ -2,6 +2,7 @@
 config.py
 .scheduler/
 stats.json
+login.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
