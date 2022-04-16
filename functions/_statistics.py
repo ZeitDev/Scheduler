@@ -18,7 +18,7 @@ class Stats():
 
     def InitializeAll(self):
         reminder_leaderboard, wasted_time_leaderboard = InitLeaderboards(config.VariableDict['bot'])
-        server_stats = {'uptime': 0, 'server_cost': 0}
+        server_stats = {'starting_date': '14.04.2022', 'uptime': 0, 'server_cost': 0}
         
         stats = {
             'reminder_leaderboard': reminder_leaderboard,
@@ -116,8 +116,8 @@ def FormatStats():
         StatsDict['wasted_time_scores'] += (ConvertSecondsToReadable(value, skips=1) + '\n')
 
 
-    StatsDict['server_stats_titles'] = 'Uptime' + '\n' + 'Server Costs'
-    StatsDict['server_stats_values'] = str(ConvertSecondsToReadable(int(server_stats['uptime']))) + '\n' + ConvertCentsToReadable(server_stats['server_cost'])
+    StatsDict['server_stats_titles'] = 'Starting Date' + '\n' 'Continuous uptime' + '\n' + 'Server Costs'
+    StatsDict['server_stats_values'] = server_stats['starting_date'] + '\n' + str(ConvertSecondsToReadable(int(server_stats['uptime']))) + '\n' + ConvertCentsToReadable(server_stats['server_cost'])
 
     return StatsDict
 
