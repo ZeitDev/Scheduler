@@ -238,9 +238,11 @@ async def UpdateEmbed(EventData, EventMemberData):
     num_members = len(GatherAllMembers())
     num_members_missing = len(EventMemberData['members_missing'])
     reminder_status = EventData['reminder_status']
-
+    time_to_event = time.mktime(EventData['date'].timetuple()) - int(time.time())
     next_reminder = await TimeToNextReminder(EventData)
-    if next_reminder != None and (reminder_status == 0 or reminder_status == 1): reminder_string = f'next reminder in {round((next_reminder/3600), 2)} h'
+
+    if (time_to_event-next_reminder) < config.SettingsDict['reminder_protection']: reminder_string = f'event is too close for reminder'
+    elif next_reminder != None and (reminder_status == 0 or reminder_status == 1): reminder_string = f'next reminder in {round((next_reminder/3600), 2)} h'
     elif next_reminder != None: reminder_string = f'next reminder for uncertain in {round((next_reminder/3600), 2)} h'
     else: reminder_string = 'no reminder remaining'
 

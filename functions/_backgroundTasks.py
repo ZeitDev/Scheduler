@@ -35,7 +35,7 @@ class BackgroundTasks():
                 self.end_of_week = False
             
 
-            await asyncio.sleep(10) #3600)
+            await asyncio.sleep(3600)
 
     async def AlertStartingEvent(self):
         while True:

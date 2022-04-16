@@ -42,12 +42,11 @@ class Stats():
     async def AddTimeToWastedTimeLeaderboard(self, ctx, args):
         stats = json.load(open('stats.json'))
 
-        member = ctx.message.mentions[0]
-
         try:
             minutes = int(args[0])
+            member = ctx.message.mentions[0]
         except:
-            await ctx.channel.send(f'Error: can not parse the number {args[0]}')
+            await ctx.channel.send(f'Error: arguments not valid. See .help wasted!')
             return
 
         stats['wasted_time_leaderboard'][f'{member.display_name}'] += minutes*60
