@@ -1,7 +1,6 @@
 # import
 import os
 import time
-import json
 import nextcord
 import warnings
 
@@ -31,7 +30,7 @@ Bot zur Terminerstellung und -verfolgung.
 - Rolle 'Terminerinnerung' kann für Urlaub entfernt werden.
 '''
 
-bot = commands.Bot(command_prefix=commands.when_mentioned_or(prefix), description=description, intents=intents)
+bot = commands.Bot(command_prefix=commands.when_mentioned_or(prefix), description=description, intents=intents, case_insensitive=True)
 config.VariableDict['bot'] = bot
 
 print('> Loading Commands')

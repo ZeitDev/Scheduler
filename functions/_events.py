@@ -13,7 +13,7 @@ class Events():
         self.SettingsDict = config.SettingsDict
         self.bot = config.VariableDict['bot']
 
-    async def InitializeEvent(self, channel, args):
+    async def Initialize(self, channel, args):
         if channel.id != self.SettingsDict['appointment_channel']: return
 
         event_title = (' ').join(args)
@@ -177,20 +177,21 @@ async def GatherReactionMembers(message):
             await message.edit(embed=embed, delete_after=5)
             return 1
 
-        async for user in reaction.users():
-                EventMemberData['members_reacted'].append(user)
+        EventMemberData['members_reacted'].extend(await reaction.users().flatten())
 
-        if reaction.emoji != '🤏' or reaction.emoji != '👎':
-            async for user in reaction.users():
-                EventMemberData['members_confirmed'].append(user)
+        bedge = nextcord.PartialEmoji.from_str(':Bedge:946041497378242560')
+        peepoNo = nextcord.PartialEmoji.from_str(':peepoNo:725015073197916229')
+        peepoSus = nextcord.PartialEmoji.from_str(':peepoSus:771894292637024267')
+        questionMark = nextcord.PartialEmoji.from_str('a:DIDSOMEONESAYCOCKQUESTIONMARK:713167792831987833')
 
-        if reaction.emoji == '🤏':
-            async for user in reaction.users():
-                EventMemberData['members_uncertain'].append(user)
-        
-        if reaction.emoji == '👎':
-            async for user in reaction.users():
-                EventMemberData['members_canceled'].append(user)
+        if reaction.emoji not in ['👎', '🤏', '🤷', bedge, peepoNo, peepoSus, questionMark]:
+            EventMemberData['members_confirmed'].extend(await reaction.users().flatten())
+
+        if reaction.emoji in ['🤏', peepoSus, questionMark]:
+            EventMemberData['members_uncertain'].extend(await reaction.users().flatten())
+
+        if reaction.emoji in ['👎', bedge, peepoNo]:
+            EventMemberData['members_canceled'].extend(await reaction.users().flatten())
 
     EventMemberData['members_missing'] = [x for x in GatherAllMembers() if x not in EventMemberData['members_reacted']]
 
@@ -214,9 +215,9 @@ async def SendEventConfirmation(EventData, EventMemberData):
     event_end_time = EventData['date'] 
     event_description = ''
     for member in EventMemberData['members_confirmed']:
-        event_description += member.display_name
+        event_description += member.display_name + ', '
 
-    await guild.create_scheduled_event(name=title, entity_type=event_entity ,start_time=event_start_time, metadata=event_metadata, end_time=event_end_time, description=event_description)
+    await guild.create_scheduled_event(name=title, entity_type=event_entity ,start_time=event_start_time, metadata=event_metadata, end_time=event_end_time, description=event_description[:-1])
 
     #alert_channel = bot.get_channel(config.SettingsDict['alert_channel'])
     #weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
@@ -286,14 +287,18 @@ async def UpdateStats(EventData, EventMemberData):
     _statistics.Stats().AddPointToReminderLeaderboard(members)
 
 async def CheckIfFinished(EventData, EventMemberData):
+    members_confirmed = EventMemberData['members_confirmed']
+    members_canceled = EventMemberData['members_canceled']
     members_missing = EventMemberData['members_missing']
     members_uncertain = EventMemberData['members_uncertain']
 
     if len(members_missing) == 0 and len(members_uncertain) == 0:
         print('Finished event successfully')
-        event_title = EventData['event_title']
 
-        embed = nextcord.Embed(description=event_title, color=0x00FF00)
+        event_title = EventData['event_title']
+        event_description = event_title + f' - findet statt \n Zusagen: {len(members_confirmed)}, Unsicher: {len(members_uncertain)}, Absagen: {len(members_canceled)}, Keine Antwort: {len(members_missing)}'
+
+        embed = nextcord.Embed(description=event_description, color=0x00FF00)
         await EventData['message'].edit(embed=embed) 
         return True
 
@@ -303,7 +308,8 @@ async def CheckIfFinished(EventData, EventMemberData):
         print(f'Finished event with {len(members_missing)} missing votes and {len(members_uncertain)} uncertain votes')
 
         event_title = EventData['event_title']
-        embed = nextcord.Embed(description=event_title, color=0xFF0000)
+        event_description = event_title + f' - findet nicht statt \n Zusagen: {len(members_confirmed)}, Unsicher: {len(members_uncertain)}, Absagen: {len(members_canceled)}, Keine Antwort: {len(members_missing)}'
+        embed = nextcord.Embed(description=event_description, color=0xFF0000)
         await EventData['message'].edit(embed=embed)
 
         time_of_creation = int(time.mktime(EventData['date'].timetuple()) - EventData['start_time'])

@@ -4,10 +4,6 @@ from nextcord.ext import commands
 from functions import _statistics
 
 class Statistics(commands.Cog):
-    """All commands about statistics"""
-    def __init__(self, bot):
-        self.bot = bot
-
     @commands.command(usage='')
     async def stats(self, ctx):
         """Display all statistics"""

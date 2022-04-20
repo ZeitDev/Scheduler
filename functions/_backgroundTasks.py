@@ -41,7 +41,7 @@ class BackgroundTasks():
         while True:
             confirmed_events = config.VariableDict['confirmed_events']
             
-            for i in range(len(confirmed_events)): # ConfirmedEventData = {'event_date': EventData['date'], 'members_confirmed': EventMemberData['members_confirmed']}
+            for i in range(len(confirmed_events)):
                 ConfirmedEventData = confirmed_events[i]
                 event_time = time.mktime(ConfirmedEventData['event_date'].timetuple())
                 
@@ -59,9 +59,9 @@ class BackgroundTasks():
 
     async def UpdateServerCost(self):
         while True:
-            price = 0.42
+            price = 42
 
-            cost = (price/2629700) * 3600
+            cost = (price/2628000) * 3600
             await _statistics.Stats().AddingServerStats('server_cost', cost)
 
             await asyncio.sleep(3600)

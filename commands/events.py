@@ -4,15 +4,11 @@ from nextcord.ext import commands
 from functions import _events
 
 class Events(commands.Cog):
-    """All commands about the calendar functionality"""
-    def __init__(self, bot):
-        self.bot = bot
-
     @commands.command(usage='Heute 18:00 / .create Fr 18 Uhr / .create 12.12. 18:00')
     async def event(self, ctx, *args):
         """Creation of an event"""
         await ctx.message.delete()
-        await _events.Events().InitializeEvent(ctx.channel, args)
+        await _events.Events().Initialize(ctx.channel, args)
     
     @commands.command(usage='')
     async def automatic(self, ctx, *args):
